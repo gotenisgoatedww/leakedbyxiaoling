@@ -1,5 +1,5 @@
-        NinjaHub = Instance.new("ScreenGui")
-	NHFrame = Instance.new("Frame")
+        HunterHub = Instance.new("ScreenGui")
+	HHFrame = Instance.new("Frame")
 	TopBar = Instance.new("Frame")
 	TextLabel = Instance.new("TextLabel")
 	MidBar = Instance.new("Frame")
@@ -487,41 +487,41 @@
 
 
 
-NinjaHub.Name = "NinjaHubv4.1"
+HunterHub.Name = "HunterHubv4.1"
 
-NinjaHub.Parent = game:GetService("CoreGui")
+HunterHub.Parent = game:GetService("CoreGui")
 
-NinjaHub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+HunterHub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-NinjaHub.ResetOnSpawn = false
+HunterHub.ResetOnSpawn = false
 
 
 
-NHFrame.Name = "NHFrame"
+HHFrame.Name = "HHFrame"
 
-NHFrame.Parent = NinjaHub
+HHFrame.Parent = HunterHub
 
-NHFrame.AnchorPoint = Vector2.new(0, 0.5)
+HHFrame.AnchorPoint = Vector2.new(0, 0.5)
 
-NHFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+HHFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 
-NHFrame.BackgroundTransparency = 0.400
+HHFrame.BackgroundTransparency = 0.400
 
-NHFrame.BorderColor3 = Color3.fromRGB(40, 40, 40)
+HHFrame.BorderColor3 = Color3.fromRGB(40, 40, 40)
 
-NHFrame.BorderSizePixel = 3
+HHFrame.BorderSizePixel = 3
 
-NHFrame.Position = UDim2.new(0.625, 0, 0.600000024, 0)
+HHFrame.Position = UDim2.new(0.625, 0, 0.600000024, 0)
 
-NHFrame.Size = UDim2.new(0.245000005, 0, 0.664667606, 0)
+HHFrame.Size = UDim2.new(0.245000005, 0, 0.664667606, 0)
 
-NHFrame.ZIndex = 2
+HHFrame.ZIndex = 2
 
 
 
 TopBar.Name = "TopBar"
 
-TopBar.Parent = NHFrame
+TopBar.Parent = HHFrame
 
 TopBar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 
@@ -553,7 +553,7 @@ TextLabel.ZIndex = 2
 
 TextLabel.Font = Enum.Font.Fantasy
 
-TextLabel.Text = "     Ninja Hub V5.0.0    "
+TextLabel.Text = "     Oblivion    "
 
 TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -3337,7 +3337,7 @@ TextLabel_25.ZIndex = 2
 
 TextLabel_25.Font = Enum.Font.Fantasy
 
-TextLabel_25.Text = "Welcome to Ninja Hub"
+TextLabel_25.Text = "Welcome to Oblivion"
 
 TextLabel_25.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -3417,7 +3417,7 @@ TextLabel_27.ZIndex = 2
 
 TextLabel_27.Font = Enum.Font.Fantasy
 
-TextLabel_27.Text = "Skidded by Xiao Ling, Never Steal From Breezy"
+TextLabel_27.Text = "Leaked & Skidded by Goten"
 
 TextLabel_27.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -3713,7 +3713,7 @@ TextLabel_31.ZIndex = 2
 
 TextLabel_31.Font = Enum.Font.Fantasy
 
-TextLabel_31.Text = "Leaked by Xiao Ling "
+TextLabel_31.Text = "Leaked by Goten, Don't steal from Breezy<3"
 
 TextLabel_31.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -15236,10 +15236,6 @@ coroutine.wrap(ULBUS_fake_script)()
 
 
 -- NA Mobile Fix
-
-
-
-
 local NAHub = Instance.new("ScreenGui")
 local AdminFrame = Instance.new("Frame")
 local TopBar = Instance.new("Frame")
