@@ -15239,4 +15239,4 @@ coroutine.wrap(ULBUS_fake_script)()
 
 
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/LoneWalker0922/YIN-YANG-NA/main/NAmobilefix.txt'))()
+
