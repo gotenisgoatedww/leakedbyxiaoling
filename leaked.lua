@@ -3337,7 +3337,7 @@ TextLabel_25.ZIndex = 2
 
 TextLabel_25.Font = Enum.Font.Fantasy
 
-TextLabel_25.Text = "Welcome to Hunter Hub,"
+TextLabel_25.Text = "Welcome to Shinto,"
 
 TextLabel_25.TextColor3 = Color3.fromRGB(255, 255, 255)
 
