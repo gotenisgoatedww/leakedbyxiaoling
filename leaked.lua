@@ -3259,7 +3259,7 @@ TextLabel_23.ZIndex = 2
 
 TextLabel_23.Font = Enum.Font.Fantasy
 
-TextLabel_23.Text = "Niggas:"
+TextLabel_23.Text = "Player Count:"
 
 TextLabel_23.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -3337,7 +3337,7 @@ TextLabel_25.ZIndex = 2
 
 TextLabel_25.Font = Enum.Font.Fantasy
 
-TextLabel_25.Text = "Leaked By Goten:"
+TextLabel_25.Text = "Welcome to Hunter Hub,"
 
 TextLabel_25.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -3417,7 +3417,7 @@ TextLabel_27.ZIndex = 2
 
 TextLabel_27.Font = Enum.Font.Fantasy
 
-TextLabel_27.Text = "Originally coded by breezyjazzy9"
+TextLabel_27.Text = "Coded and Made By Shinto"
 
 TextLabel_27.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -3637,7 +3637,7 @@ TextLabel_30.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 TextLabel_30.TextScaled = true
 
-TextLabel_30.TextSize = 24.000
+TextLabel_30.TextSize = 21.000
 
 TextLabel_30.TextWrapped = true
 
@@ -3713,7 +3713,7 @@ TextLabel_31.ZIndex = 2
 
 TextLabel_31.Font = Enum.Font.Fantasy
 
-TextLabel_31.Text = "discord.gg/shinto"
+TextLabel_31.Text = "discord.gg/shinto don't steal from shinto ever again"
 
 TextLabel_31.TextColor3 = Color3.fromRGB(255, 255, 255)
 
