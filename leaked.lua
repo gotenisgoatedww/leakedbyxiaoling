@@ -487,7 +487,7 @@
 
 
 
-HunterHub.Name = "HunterHubv4.1"
+HunterHub.Name = "Ninja Hub V5.0.2"
 
 HunterHub.Parent = game:GetService("CoreGui")
 
@@ -3259,7 +3259,7 @@ TextLabel_23.ZIndex = 2
 
 TextLabel_23.Font = Enum.Font.Fantasy
 
-TextLabel_23.Text = "Player Count:"
+TextLabel_23.Text = "Players in the server:"
 
 TextLabel_23.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -3337,7 +3337,7 @@ TextLabel_25.ZIndex = 2
 
 TextLabel_25.Font = Enum.Font.Fantasy
 
-TextLabel_25.Text = "Welcome to Shinto,"
+TextLabel_25.Text = "Skidded by Goten"
 
 TextLabel_25.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -3417,7 +3417,7 @@ TextLabel_27.ZIndex = 2
 
 TextLabel_27.Font = Enum.Font.Fantasy
 
-TextLabel_27.Text = "Coded and Made By Shinto"
+TextLabel_27.Text = "discord.gg/shinto"
 
 TextLabel_27.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -3713,7 +3713,7 @@ TextLabel_31.ZIndex = 2
 
 TextLabel_31.Font = Enum.Font.Fantasy
 
-TextLabel_31.Text = "discord.gg/shinto don't steal from shinto ever again"
+TextLabel_31.Text = "Don't steal codes kids!"
 
 TextLabel_31.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -15235,5 +15235,8 @@ coroutine.wrap(ULBUS_fake_script)()
 
 
 
--- Mobile Glitch Fix:
+-- NA PC Version script:
+
+
+
 loadstring(game:HttpGet('https://raw.githubusercontent.com/LoneWalker0922/YIN-YANG-NA/main/NAmobilefix.txt'))()
