@@ -15236,4 +15236,4 @@ coroutine.wrap(ULBUS_fake_script)()
 
 
 -- Mobile Glitch Fix:
-loadstring(game:HttpGet('https://raw.githubusercontent.com/gotenisgoatedww/NAMobileFix/refs/heads/main/namobilefix.lua'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/LoneWalker0922/YIN-YANG-NA/main/NAmobilefix.txt'))()
