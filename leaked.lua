@@ -9429,36 +9429,53 @@ local function getCharacterHeadPosition()
     return Vector3.new(0, 0, 0)
 end
 
--- Refined points for "SHINTO" with better spacing and clarity
-local shintoPoints = {
-    -- "S"
-    Vector3.new(-50, 60, 0), Vector3.new(-45, 65, 0), Vector3.new(-40, 65, 0), Vector3.new(-35, 60, 0),
-    Vector3.new(-40, 55, 0), Vector3.new(-45, 55, 0), Vector3.new(-50, 50, 0),
-    
-    -- "H"
-    Vector3.new(-30, 60, 0), Vector3.new(-30, 50, 0), Vector3.new(-25, 55, 0),
-    Vector3.new(-20, 60, 0), Vector3.new(-20, 50, 0),
-    
-    -- "I"
-    Vector3.new(-10, 60, 0), Vector3.new(-10, 50, 0),
-    
-    -- "N"
-    Vector3.new(5, 50, 0), Vector3.new(5, 60, 0), Vector3.new(10, 55, 0), Vector3.new(15, 60, 0), Vector3.new(15, 50, 0),
-    
-    -- "T"
-    Vector3.new(25, 60, 0), Vector3.new(20, 60, 0), Vector3.new(30, 60, 0), Vector3.new(25, 50, 0),
-    
-    -- "O"
-    Vector3.new(40, 60, 0), Vector3.new(40, 50, 0), Vector3.new(45, 65, 0), Vector3.new(50, 60, 0),
-    Vector3.new(50, 50, 0), Vector3.new(45, 45, 0)
+-- Create a table of points for each letter
+local letterPoints = {
+    S = {
+        Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
+        Vector3.new(10, 55, 0), Vector3.new(5, 55, 0), Vector3.new(0, 50, 0),
+    },
+    H = {
+        Vector3.new(20, 60, 0), Vector3.new(20, 50, 0), Vector3.new(25, 55, 0),
+        Vector3.new(30, 60, 0), Vector3.new(30, 50, 0),
+    },
+    I = {
+        Vector3.new(40, 60, 0), Vector3.new(40, 50, 0),
+    },
+    N = {
+        Vector3.new(55, 50, 0), Vector3.new(55, 60, 0), Vector3.new(60, 55, 0), Vector3.new(65, 60, 0),
+        Vector3.new(65, 50, 0),
+    },
+    T = {
+        Vector3.new(75, 60, 0), Vector3.new(70, 60, 0), Vector3.new(80, 60, 0), Vector3.new(75, 50, 0),
+    },
+    O = {
+        Vector3.new(90, 60, 0), Vector3.new(90, 50, 0), Vector3.new(95, 55, 0), Vector3.new(100, 60, 0),
+        Vector3.new(100, 50, 0), Vector3.new(95, 45, 0),
+    }
 }
+
+-- Combine all letters into the full word "SHINTO"
+local function getShintoPoints()
+    local points = {}
+    local currentX = 0
+
+    for _, letter in ipairs({"S", "H", "I", "N", "T", "O"}) do
+        for _, point in ipairs(letterPoints[letter]) do
+            table.insert(points, point + Vector3.new(currentX, 0, 0))
+        end
+        currentX = currentX + 20  -- Add extra space between letters
+    end
+
+    return points
+end
 
 local function tweenKunaiToPoints(kunai, points, basePosition)
     for i, point in ipairs(points) do
         local goal = {Position = basePosition + point}
-        local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tween = TweenService:Create(kunai, tweenInfo, goal)
-        
+
         tween:Play()
         tween.Completed:Wait()
     end
@@ -9468,6 +9485,7 @@ local function onThrownKunaiAdded(kunai)
     if kunai:IsA("BasePart") and isOn then
         local headPosition = getCharacterHeadPosition()
         local basePosition = headPosition + Vector3.new(0, 20, -10)
+        local shintoPoints = getShintoPoints()
         tweenKunaiToPoints(kunai, shintoPoints, basePosition)
     end
 end
@@ -9485,6 +9503,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 
