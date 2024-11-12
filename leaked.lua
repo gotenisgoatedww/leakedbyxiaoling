@@ -487,7 +487,7 @@
 
 
 
-HunterHub.Name = "Shinto Version 1"
+HunterHub.Name = "Ninja Hub V5.0.2"
 
 HunterHub.Parent = game:GetService("CoreGui")
 
@@ -9511,9 +9511,6 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
-
-
-
 
 
 TextLabel_60.Parent = Frame4_4
