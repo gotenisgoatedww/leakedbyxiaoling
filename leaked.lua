@@ -7184,146 +7184,225 @@ TextButton_29.TextWrapped = true
 
 
 
+local frameVisible = false
+
 local gui = Instance.new("ScreenGui")
 gui.Name = "PlayerSelectorGUI"
 gui.ResetOnSpawn = false
 
--- Create the main frame for the dropdown
+-- Frame for the GUI (With rounded corners and gradient background)
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 50)  -- Adjusted size for consistency with your design
-frame.Position = UDim2.new(0.5, -150, 0.5, -25)
-frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-frame.BackgroundTransparency = 0.4
+frame.Size = UDim2.new(0, 300, 0, 400)  -- Increased size for better spacing
+frame.Position = UDim2.new(0.5, -150, 0.5, -200)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)  -- Darker background color
+frame.BackgroundTransparency = 0.2  -- More transparent background for modern look
 frame.BorderSizePixel = 2
 frame.Visible = false
 frame.Parent = gui
 frame.Active = true
 frame.Draggable = true
 
--- Add rounded corners to the frame to match your design
+-- Adding rounded corners to the frame
 local frameCorner = Instance.new("UICorner")
-frameCorner.CornerRadius = UDim.new(0, 12)
+frameCorner.CornerRadius = UDim.new(0, 12)  -- Rounded corners
 frameCorner.Parent = frame
 
--- Create the button that opens the dropdown
-local openButton = Instance.new("TextButton")
-openButton.Size = UDim2.new(1, 0, 1, 0)
-openButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)  -- Dark color to match your style
-openButton.Text = "Select Player"
-openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-openButton.TextSize = 16
-openButton.Font = Enum.Font.Fantasy
-openButton.Parent = frame
+-- Add shadow effect to the frame
+local shadow = Instance.new("ImageLabel")
+shadow.Size = UDim2.new(1, 10, 1, 10)
+shadow.Position = UDim2.new(0, -5, 0, -5)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://6000273656"  -- Shadow image
+shadow.ImageTransparency = 0.7
+shadow.Parent = frame
 
--- Add rounded corners to the button
-local buttonCorner = Instance.new("UICorner")
-buttonCorner.CornerRadius = UDim.new(0, 12)
-buttonCorner.Parent = openButton
-
--- Create the dropdown list (initially hidden)
-local dropDownList = Instance.new("Frame")
-dropDownList.Size = UDim2.new(1, 0, 0, 0)
-dropDownList.Position = UDim2.new(0, 0, 1, 0)
-dropDownList.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-dropDownList.BackgroundTransparency = 0.4
-dropDownList.BorderSizePixel = 2
-dropDownList.Visible = false
-dropDownList.Parent = frame
-
--- Add rounded corners to the dropdown list
-local dropDownListCorner = Instance.new("UICorner")
-dropDownListCorner.CornerRadius = UDim.new(0, 12)
-dropDownListCorner.Parent = dropDownList
-
--- Create the scrolling frame inside the dropdown list
+-- Scrolling Frame for the player list
 local scrollFrame = Instance.new("ScrollingFrame")
-scrollFrame.Size = UDim2.new(1, 0, 1, 0)
-scrollFrame.Position = UDim2.new(0, 0, 0, 0)
+scrollFrame.Size = UDim2.new(1, 0, 1, -50)  -- Adjusted size
+scrollFrame.Position = UDim2.new(0, 0, 0, 50)
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollFrame.BackgroundTransparency = 1
-scrollFrame.Parent = dropDownList
+scrollFrame.Parent = frame
 
--- Function to create a button for each player in the list
-local function createPlayerButton(player)
+-- Function to make a frame draggable
+local function makeDraggable(element)
+    local dragging
+    local dragStart
+    local startPos
+
+    element.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = element.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    element.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+            local delta = input.Position - dragStart
+            element.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+-- Label at the top of the frame
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, 0, 0, 40)
+label.Position = UDim2.new(0, 0, 0, 0)
+label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+label.Text = "Target Player"
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.TextSize = 18
+label.Font = Enum.Font.GothamBold  -- New modern font
+label.Parent = frame
+
+-- Adding rounded corners to the label for consistency
+local labelCorner = Instance.new("UICorner")
+labelCorner.CornerRadius = UDim.new(0, 8)
+labelCorner.Parent = label
+
+makeDraggable(frame)
+
+local selectedPlayerName = nil
+local teleportedKunais = {}
+
+-- Function to teleport Kunai to a player's head
+local function teleportKunaiToPlayerHead(kunai, playerName)
+    local player = game.Players:FindFirstChild(playerName)
+    if player and player.Character and kunai and kunai:IsA("BasePart") then
+        local character = player.Character
+        local head = character:FindFirstChild("Head")
+        if head then
+            kunai.CFrame = head.CFrame
+            teleportedKunais[kunai] = true
+        end
+    end
+end
+
+-- Function to check for Kunais and teleport them
+local function checkForKunais()
+    if selectedPlayerName then
+        for _, kunai in ipairs(workspace:GetChildren()) do
+            if (kunai.Name == "ThrownKunai" or kunai.Name == "ShurikenKunai") and not teleportedKunais[kunai] then
+                teleportKunaiToPlayerHead(kunai, selectedPlayerName)
+            end
+        end
+    end
+end
+
+-- Loop to check for thrown Kunais
+spawn(function()
+    while true do
+        checkForKunais()
+        wait(0.1)
+    end
+end)
+
+-- Add player to the list with a new look (rounded buttons)
+local function addPlayerToList(player)
+    local buttonHeight = 35  -- Slightly bigger button size
+    local padding = 10
+    local offsetY = (#scrollFrame:GetChildren() - 1) * (buttonHeight + padding)
+
     local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, -10, 0, 35)
-    button.Position = UDim2.new(0, 5, 0, 0)
+    button.Size = UDim2.new(1, -padding * 2, 0, buttonHeight)
+    button.Position = UDim2.new(0, padding, 0, offsetY)
     button.Text = player.Name
-    button.TextSize = 14  -- Smaller text size to match your style
-    button.Font = Enum.Font.Fantasy
-    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)  -- Dark background for buttons
+    button.TextSize = 16
+    button.Font = Enum.Font.Gotham  -- New font for buttons
+    button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)  -- Slightly lighter background for buttons
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
     button.Name = player.Name .. "Button"
     button.Parent = scrollFrame
 
-    -- Add rounded corners to the button
+    -- Adding rounded corners to the button
     local buttonCorner = Instance.new("UICorner")
     buttonCorner.CornerRadius = UDim.new(0, 8)
     buttonCorner.Parent = button
 
-    -- Button hover effect (slightly lighter color)
+    -- Mouse hover effects (button color change)
     button.MouseEnter:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)  -- Lighter on hover
     end)
     button.MouseLeave:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)  -- Original color
     end)
 
-    -- When clicked, select the player
+    -- Connect button to select the player
     button.MouseButton1Down:Connect(function()
-        openButton.Text = "Selected: " .. player.Name
         selectedPlayerName = player.Name
-        dropDownList.Visible = false  -- Hide the dropdown after selection
     end)
 
-    -- Adjust the scroll frame size when a new button is added
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, (#scrollFrame:GetChildren()) * 40)
+    -- Adjust canvas size to fit the added player
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, offsetY + buttonHeight + padding)
 end
 
--- Function to update the dropdown with the current players
-local function updatePlayerList()
-    -- Clear existing buttons
-    for _, child in ipairs(scrollFrame:GetChildren()) do
-        if child:IsA("TextButton") then
-            child:Destroy()
-        end
-    end
-
-    -- Add buttons for each player
-    local players = game.Players:GetPlayers()
-    for _, player in ipairs(players) do
-        createPlayerButton(player)
-    end
-end
-
--- Toggle the visibility of the dropdown list
-openButton.MouseButton1Down:Connect(function()
-    -- Update player list when the button is clicked
-    updatePlayerList()
-
-    -- Show or hide the dropdown list
-    dropDownList.Visible = not dropDownList.Visible
-end)
-
--- Handle player joining and leaving the game
-game.Players.PlayerAdded:Connect(function(player)
-    createPlayerButton(player)
-end)
-
-game.Players.PlayerRemoving:Connect(function(player)
+-- Remove player from the list
+local function removePlayerFromList(player)
     local button = scrollFrame:FindFirstChild(player.Name .. "Button")
     if button then
         button:Destroy()
-    end
-end)
 
--- Reparent the GUI to the PlayerGui
+        local buttons = scrollFrame:GetChildren()
+        local buttonHeight = 35  -- Keep consistent with button height
+        local padding = 10
+        local offsetY = 0
+
+        for _, btn in ipairs(buttons) do
+            if btn:IsA("TextButton") then
+                btn.Position = UDim2.new(0, padding, 0, offsetY)
+                offsetY = offsetY + buttonHeight + padding
+            end
+        end
+
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, offsetY)
+    end
+end
+
+-- Populate the player list
+local function populatePlayerList()
+    local players = game.Players:GetPlayers()
+    for _, player in ipairs(players) do
+        addPlayerToList(player)
+    end
+end
+
+-- Event to handle when a player joins
+game.Players.PlayerAdded:Connect(addPlayerToList)
+
+-- Event to handle when a player leaves
+game.Players.PlayerRemoving:Connect(removePlayerFromList)
+
+-- Initial population of player list
+populatePlayerList()
+
+-- Function to reparent GUI to PlayerGui
 local function reparentGUI()
     gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 end
 
 reparentGUI()
+
 game.Players.LocalPlayer.CharacterAdded:Connect(reparentGUI)
+
+-- Button to toggle the visibility of the frame
+TextButton_29.MouseButton1Down:Connect(function()
+    frame.Visible = not frame.Visible
+    if frame.Visible then
+        TextButton_29.Text = "Close"
+        TextButton_29.TextColor3 = Color3.fromRGB(255, 0, 0)
+    else
+        TextButton_29.Text = "Open"
+        TextButton_29.TextColor3 = Color3.fromRGB(0, 255, 0)
+    end
+end)
 
 
 
