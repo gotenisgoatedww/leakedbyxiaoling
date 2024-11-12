@@ -9399,7 +9399,6 @@ TextButton_38.TextWrapped = true
 
 
 
-local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -9460,27 +9459,24 @@ local function getLolPoints()
 end
 
 local function moveKunaiToPoints(kunai, points, basePosition)
-    local part = kunai
     local i = 1
-    local goalPosition = basePosition + points[i]
 
     local function updatePosition()
         if i <= #points then
             local targetPosition = basePosition + points[i]
-            local currentCFrame = part.CFrame
-            local targetCFrame = CFrame.new(targetPosition)
+            -- Use CFrame to move the kunai smoothly to the target position
+            kunai.CFrame = kunai.CFrame:Lerp(CFrame.new(targetPosition), 0.1)  -- Lerp factor (0.1) for smooth transition
 
-            -- Move the kunai using Lerp without adjusting speed
-            part.CFrame = currentCFrame:Lerp(targetCFrame, 0.1)  -- Lerp factor (0.1) can be adjusted for smoothness
-
-            if (part.Position - targetPosition).Magnitude < 1 then
+            -- If the kunai is near the target position, move to the next point
+            if (kunai.Position - targetPosition).Magnitude < 1 then
                 i = i + 1
             end
         else
-            part.CFrame = CFrame.new(basePosition + points[#points])  -- Final position
+            kunai.CFrame = CFrame.new(basePosition + points[#points])  -- Final position
         end
     end
 
+    -- Connect the updatePosition function to run every frame
     RunService.Heartbeat:Connect(updatePosition)
 end
 
