@@ -9429,63 +9429,73 @@ local function getCharacterHeadPosition()
     return Vector3.new(0, 0, 0)
 end
 
--- Define points for each letter in "LOL"
+-- Points for each letter in "SHINTO"
 local letterPoints = {
-    L = {
-        Vector3.new(0, 60, 0), Vector3.new(0, 50, 0),
-        Vector3.new(5, 50, 0), Vector3.new(5, 40, 0)
+    S = {
+        Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
+        Vector3.new(10, 55, 0), Vector3.new(5, 55, 0), Vector3.new(0, 50, 0),
+    },
+    H = {
+        Vector3.new(20, 60, 0), Vector3.new(20, 50, 0), Vector3.new(25, 55, 0),
+        Vector3.new(30, 60, 0), Vector3.new(30, 50, 0),
+    },
+    I = {
+        Vector3.new(40, 60, 0), Vector3.new(40, 50, 0),
+    },
+    N = {
+        Vector3.new(55, 50, 0), Vector3.new(55, 60, 0), Vector3.new(60, 55, 0), Vector3.new(65, 60, 0),
+        Vector3.new(65, 50, 0),
+    },
+    T = {
+        Vector3.new(75, 60, 0), Vector3.new(70, 60, 0), Vector3.new(80, 60, 0), Vector3.new(75, 50, 0),
     },
     O = {
-        Vector3.new(10, 60, 0), Vector3.new(10, 50, 0), Vector3.new(15, 45, 0), Vector3.new(20, 50, 0),
-        Vector3.new(20, 60, 0), Vector3.new(15, 65, 0), Vector3.new(10, 60, 0)
+        Vector3.new(90, 60, 0), Vector3.new(90, 50, 0), Vector3.new(95, 45, 0), Vector3.new(100, 50, 0),
+        Vector3.new(100, 60, 0), Vector3.new(95, 65, 0), Vector3.new(90, 60, 0),
     }
 }
 
--- Combine all letters into the full word "LOL"
-local function getLolPoints()
-    local points = {}
-    local currentX = 0
-    local letterSpacing = 3  -- Reduced space between letters
-
-    -- Iterate through each letter and add its points to the final list
-    for _, letter in ipairs({"L", "O", "L"}) do
-        for _, point in ipairs(letterPoints[letter]) do
-            table.insert(points, point + Vector3.new(currentX, 0, 0))
+-- Function to move the kunai to each letter's position
+local function moveKunaiToLetter(kunai, letter, basePosition)
+    local points = letterPoints[letter]
+    local currentIndex = 1
+    
+    -- Use CFrame to move the kunai to each point in the letter shape
+    local function moveToNextPoint()
+        if currentIndex <= #points then
+            local targetPosition = basePosition + points[currentIndex]
+            -- Lerp CFrame for smooth movement
+            kunai.CFrame = kunai.CFrame:Lerp(CFrame.new(targetPosition), 0.1)  -- Lerp factor for smooth transition
+            -- If the kunai reaches near the target position, go to the next point
+            if (kunai.Position - targetPosition).Magnitude < 1 then
+                currentIndex = currentIndex + 1
+            end
         end
-        currentX = currentX + letterSpacing
     end
 
-    return points
+    -- Connect the update function to run every frame until the letter is complete
+    RunService.Heartbeat:Connect(moveToNextPoint)
 end
 
-local function moveKunaiToPoints(kunai, points, basePosition)
-    local i = 1
+-- Function to spell out the word "SHINTO"
+local function spellOutShinto(kunai)
+    local headPosition = getCharacterHeadPosition()
+    local basePosition = headPosition + Vector3.new(0, 20, -10)
+    
+    local letterOrder = {"S", "H", "I", "N", "T", "O"}  -- Order of letters to spell out "SHINTO"
+    local letterSpacing = 7  -- Adjust the space between letters
 
-    local function updatePosition()
-        if i <= #points then
-            local targetPosition = basePosition + points[i]
-            -- Use CFrame to move the kunai smoothly to the target position
-            kunai.CFrame = kunai.CFrame:Lerp(CFrame.new(targetPosition), 0.1)  -- Lerp factor (0.1) for smooth transition
-
-            -- If the kunai is near the target position, move to the next point
-            if (kunai.Position - targetPosition).Magnitude < 1 then
-                i = i + 1
-            end
-        else
-            kunai.CFrame = CFrame.new(basePosition + points[#points])  -- Final position
-        end
+    -- Iterate over each letter in "SHINTO"
+    for _, letter in ipairs(letterOrder) do
+        -- Move the kunai to spell each letter
+        moveKunaiToLetter(kunai, letter, basePosition)
+        basePosition = basePosition + Vector3.new(letterSpacing, 0, 0)  -- Move the base position to the next letter's starting point
     end
-
-    -- Connect the updatePosition function to run every frame
-    RunService.Heartbeat:Connect(updatePosition)
 end
 
 local function onThrownKunaiAdded(kunai)
     if kunai:IsA("BasePart") and isOn then
-        local headPosition = getCharacterHeadPosition()
-        local basePosition = headPosition + Vector3.new(0, 20, -10)
-        local lolPoints = getLolPoints()
-        moveKunaiToPoints(kunai, lolPoints, basePosition)
+        spellOutShinto(kunai)
     end
 end
 
@@ -9502,6 +9512,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 
