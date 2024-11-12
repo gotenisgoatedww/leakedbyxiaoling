@@ -9429,7 +9429,7 @@ local function getCharacterHeadPosition()
     return Vector3.new(0, 0, 0)
 end
 
--- Points for each letter in "SHINTO"
+-- Define the points for each letter in "SHINTO"
 local letterPoints = {
     S = {
         Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
@@ -9455,29 +9455,23 @@ local letterPoints = {
     }
 }
 
--- Function to move the kunai to each letter's position
+-- Function to move the kunai to each letter's position using CFrame
 local function moveKunaiToLetter(kunai, letter, basePosition)
     local points = letterPoints[letter]
-    local currentIndex = 1
-    
-    -- Use CFrame to move the kunai to each point in the letter shape
-    local function moveToNextPoint()
-        if currentIndex <= #points then
-            local targetPosition = basePosition + points[currentIndex]
-            -- Lerp CFrame for smooth movement
-            kunai.CFrame = kunai.CFrame:Lerp(CFrame.new(targetPosition), 0.1)  -- Lerp factor for smooth transition
-            -- If the kunai reaches near the target position, go to the next point
-            if (kunai.Position - targetPosition).Magnitude < 1 then
-                currentIndex = currentIndex + 1
-            end
+    for _, point in ipairs(points) do
+        local targetPosition = basePosition + point
+        -- Smoothly move the kunai to each point using CFrame
+        local moveToPosition = CFrame.new(targetPosition)
+        -- Lerp CFrame for smooth transition
+        kunai.CFrame = kunai.CFrame:Lerp(moveToPosition, 0.1)  
+        -- Wait until it moves close to the target position before continuing
+        while (kunai.Position - targetPosition).Magnitude > 0.5 do
+            wait()
         end
     end
-
-    -- Connect the update function to run every frame until the letter is complete
-    RunService.Heartbeat:Connect(moveToNextPoint)
 end
 
--- Function to spell out the word "SHINTO"
+-- Function to spell out "SHINTO"
 local function spellOutShinto(kunai)
     local headPosition = getCharacterHeadPosition()
     local basePosition = headPosition + Vector3.new(0, 20, -10)
@@ -9512,6 +9506,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 
