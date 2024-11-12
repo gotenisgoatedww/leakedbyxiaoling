@@ -9400,198 +9400,85 @@ TextButton_38.TextWrapped = true
 
 
 local TweenService = game:GetService("TweenService")
-
 local Players = game:GetService("Players")
-
 local Workspace = game:GetService("Workspace")
-
-
 
 local localPlayer = Players.LocalPlayer
 
+-- Toggle button functionality
 local isOn = false
-
-
-
 local function updateButton()
-
     if isOn then
-
         TextButton_38.Text = "On"
-
         TextButton_38.TextColor3 = Color3.fromRGB(0, 255, 0)
-
     else
-
         TextButton_38.Text = "Off"
-
         TextButton_38.TextColor3 = Color3.fromRGB(255, 0, 0)
-
     end
-
 end
-
-
 
 TextButton_38.MouseButton1Click:Connect(function()
-
     isOn = not isOn
-
     updateButton()
-
 end)
-
-
 
 local function getCharacterHeadPosition()
-
     if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
-
         return localPlayer.Character.Head.Position
-
     end
-
     return Vector3.new(0, 0, 0)
-
 end
 
-
-
-local heartPoints = {
-
-    Vector3.new(0, 50, 0),
-
-    Vector3.new(5, 55, 0),
-
-    Vector3.new(10, 60, 0),
-
-    Vector3.new(15, 62, 0),
-
-    Vector3.new(20, 63, 0),
-
-    Vector3.new(25, 62, 0),
-
-    Vector3.new(30, 60, 0),
-
-    Vector3.new(35, 55, 0),
-
-    Vector3.new(40, 50, 0),
-
-    Vector3.new(35, 45, 0),
-
-    Vector3.new(30, 40, 0),
-
-    Vector3.new(25, 35, 0),
-
-    Vector3.new(20, 30, 0),
-
-    Vector3.new(15, 25, 0),
-
-    Vector3.new(10, 20, 0),
-
-    Vector3.new(5, 15, 0),
-
-    Vector3.new(0, 10, 0),
-
-    Vector3.new(-5, 15, 0),
-
-    Vector3.new(-10, 20, 0),
-
-    Vector3.new(-15, 25, 0),
-
-    Vector3.new(-20, 30, 0),
-
-    Vector3.new(-25, 35, 0),
-
-    Vector3.new(-30, 40, 0),
-
-    Vector3.new(-35, 45, 0),
-
-    Vector3.new(-40, 50, 0),
-
-    Vector3.new(-35, 55, 0),
-
-    Vector3.new(-30, 60, 0),
-
-    Vector3.new(-25, 62, 0),
-
-    Vector3.new(-20, 63, 0),
-
-    Vector3.new(-15, 62, 0),
-
-    Vector3.new(-10, 60, 0),
-
-    Vector3.new(-5, 55, 0),
-
-    Vector3.new(0, 50, 0)
-
+-- Updated to form the word "SHINTO"
+local shintoPoints = {
+    -- Coordinates for "S"
+    Vector3.new(-20, 60, 0), Vector3.new(-15, 65, 0), Vector3.new(-10, 60, 0), Vector3.new(-15, 55, 0), Vector3.new(-20, 50, 0),
+    -- Coordinates for "H"
+    Vector3.new(-5, 60, 0), Vector3.new(-5, 50, 0), Vector3.new(5, 60, 0), Vector3.new(5, 50, 0), Vector3.new(0, 55, 0),
+    -- Coordinates for "I"
+    Vector3.new(10, 60, 0), Vector3.new(10, 50, 0),
+    -- Coordinates for "N"
+    Vector3.new(15, 50, 0), Vector3.new(15, 60, 0), Vector3.new(20, 55, 0), Vector3.new(25, 60, 0), Vector3.new(25, 50, 0),
+    -- Coordinates for "T"
+    Vector3.new(35, 60, 0), Vector3.new(30, 60, 0), Vector3.new(40, 60, 0), Vector3.new(35, 50, 0),
+    -- Coordinates for "O"
+    Vector3.new(50, 50, 0), Vector3.new(50, 60, 0), Vector3.new(55, 65, 0), Vector3.new(60, 60, 0), Vector3.new(60, 50, 0),
+    Vector3.new(55, 45, 0) -- Connect back to "O" starting point
 }
 
-
-
 local function tweenKunaiToPoints(kunai, points, basePosition)
-
     for i, point in ipairs(points) do
-
         local goal = {Position = basePosition + point}
-
-        local tweenInfo = TweenInfo.new(0.01, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-
+        local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tween = TweenService:Create(kunai, tweenInfo, goal)
-
         
-
         tween:Play()
-
         tween.Completed:Wait()
-
     end
-
 end
-
-
 
 local function onThrownKunaiAdded(kunai)
-
     if kunai:IsA("BasePart") and isOn then
-
         local headPosition = getCharacterHeadPosition()
-
         local basePosition = headPosition + Vector3.new(0, 20, -10)
-
-        tweenKunaiToPoints(kunai, heartPoints, basePosition)
-
+        tweenKunaiToPoints(kunai, shintoPoints, basePosition)
     end
-
 end
-
-
 
 for _, kunai in ipairs(Workspace:GetChildren()) do
-
     if kunai.Name == "ThrownKunai" then
-
         onThrownKunaiAdded(kunai)
-
     end
-
 end
 
-
-
 Workspace.ChildAdded:Connect(function(child)
-
     if child.Name == "ThrownKunai" then
-
         onThrownKunaiAdded(child)
-
     end
-
 end)
 
-
-
 updateButton()
+
 
 
 
