@@ -9405,8 +9405,9 @@ local Workspace = game:GetService("Workspace")
 
 local localPlayer = Players.LocalPlayer
 
--- Toggle button functionality
 local isOn = false
+
+-- Toggle button functionality
 local function updateButton()
     if isOn then
         TextButton_38.Text = "On"
@@ -9422,6 +9423,7 @@ TextButton_38.MouseButton1Click:Connect(function()
     updateButton()
 end)
 
+-- Function to get character's head position
 local function getCharacterHeadPosition()
     if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
         return localPlayer.Character.Head.Position
@@ -9459,24 +9461,24 @@ local letterPoints = {
 local function getShintoPoints()
     local points = {}
     local currentX = 0
+    local letterSpacing = 7  -- Space between letters
 
-    -- Reduced the spacing between the letters to avoid overlap
-    local letterSpacing = 15  -- Smaller space between letters
-    
+    -- Loop over each letter and add its points to the total points
     for _, letter in ipairs({"S", "H", "I", "N", "T", "O"}) do
         for _, point in ipairs(letterPoints[letter]) do
-            table.insert(points, point + Vector3.new(currentX, 0, 0))
+            table.insert(points, point + Vector3.new(currentX, 0, 0))  -- Add X offset for spacing
         end
-        currentX = currentX + letterSpacing  -- Adjust space between letters
+        currentX = currentX + letterSpacing  -- Move to the next letter's starting position
     end
 
     return points
 end
 
+-- Function to tween the Kunai to the points
 local function tweenKunaiToPoints(kunai, points, basePosition)
     for i, point in ipairs(points) do
         local goal = {Position = basePosition + point}
-        local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local tweenInfo = TweenInfo.new(0.01, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tween = TweenService:Create(kunai, tweenInfo, goal)
 
         tween:Play()
@@ -9484,21 +9486,24 @@ local function tweenKunaiToPoints(kunai, points, basePosition)
     end
 end
 
+-- Handle when a Kunai is thrown
 local function onThrownKunaiAdded(kunai)
-    if kunai:IsA("BasePart") and isOn then
+    if kunai:IsA("BasePart") then
         local headPosition = getCharacterHeadPosition()
-        local basePosition = headPosition + Vector3.new(0, 20, -10)
+        local basePosition = headPosition + Vector3.new(0, 20, -10)  -- Adjust the base position slightly above the head
         local shintoPoints = getShintoPoints()
         tweenKunaiToPoints(kunai, shintoPoints, basePosition)
     end
 end
 
+-- Check all existing Kunais in the workspace
 for _, kunai in ipairs(Workspace:GetChildren()) do
     if kunai.Name == "ThrownKunai" then
         onThrownKunaiAdded(kunai)
     end
 end
 
+-- Listen for new Kunais being added
 Workspace.ChildAdded:Connect(function(child)
     if child.Name == "ThrownKunai" then
         onThrownKunaiAdded(child)
@@ -9506,6 +9511,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 
