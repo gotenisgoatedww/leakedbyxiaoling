@@ -9399,9 +9399,9 @@ TextButton_38.TextWrapped = true
 
 
 
+local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
-local RunService = game:GetService("RunService")
 
 local localPlayer = Players.LocalPlayer
 
@@ -9429,7 +9429,7 @@ local function getCharacterHeadPosition()
     return Vector3.new(0, 0, 0)
 end
 
--- Define the points for each letter in "SHINTO"
+-- Points for each letter in "SHINTO"
 local letterPoints = {
     S = {
         Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
@@ -9450,55 +9450,58 @@ local letterPoints = {
         Vector3.new(75, 60, 0), Vector3.new(70, 60, 0), Vector3.new(80, 60, 0), Vector3.new(75, 50, 0),
     },
     O = {
-        Vector3.new(90, 60, 0), Vector3.new(90, 50, 0), Vector3.new(95, 45, 0), Vector3.new(100, 50, 0),
-        Vector3.new(100, 60, 0), Vector3.new(95, 65, 0), Vector3.new(90, 60, 0),
+        Vector3.new(90, 60, 0), Vector3.new(90, 50, 0), Vector3.new(95, 55, 0), Vector3.new(100, 60, 0),
+        Vector3.new(100, 50, 0), Vector3.new(95, 45, 0),
     }
 }
 
--- Function to move the kunai to each letter's position using CFrame
-local function moveKunaiToLetter(kunai, letter, basePosition)
-    local points = letterPoints[letter]
-    for _, point in ipairs(points) do
-        local targetPosition = basePosition + point
-        -- Smoothly move the kunai to each point using CFrame
-        local moveToPosition = CFrame.new(targetPosition)
-        -- Lerp CFrame for smooth transition
-        kunai.CFrame = kunai.CFrame:Lerp(moveToPosition, 0.1)  
-        -- Wait until it moves close to the target position before continuing
-        while (kunai.Position - targetPosition).Magnitude > 0.5 do
-            wait()
-        end
-    end
-end
-
--- Function to spell out "SHINTO"
-local function spellOutShinto(kunai)
-    local headPosition = getCharacterHeadPosition()
-    local basePosition = headPosition + Vector3.new(0, 20, -10)
+-- Combine all letters into the full word "SHINTO"
+local function getShintoPoints()
+    local points = {}
+    local currentX = 0
+    local letterSpacing = 7  -- Space between letters
     
-    local letterOrder = {"S", "H", "I", "N", "T", "O"}  -- Order of letters to spell out "SHINTO"
-    local letterSpacing = 7  -- Adjust the space between letters
+    -- Loop over each letter and add its points to the total points
+    for _, letter in ipairs({"S", "H", "I", "N", "T", "O"}) do
+        for _, point in ipairs(letterPoints[letter]) do
+            table.insert(points, point + Vector3.new(currentX, 0, 0))  -- Add X offset for spacing
+        end
+        currentX = currentX + letterSpacing  -- Move to the next letter's starting position
+    end
 
-    -- Iterate over each letter in "SHINTO"
-    for _, letter in ipairs(letterOrder) do
-        -- Move the kunai to spell each letter
-        moveKunaiToLetter(kunai, letter, basePosition)
-        basePosition = basePosition + Vector3.new(letterSpacing, 0, 0)  -- Move the base position to the next letter's starting point
+    return points
+end
+
+-- Function to move the Kunai to the points
+local function moveKunaiToPoints(kunai, points, basePosition)
+    for i, point in ipairs(points) do
+        local goal = {Position = basePosition + point}
+        local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local tween = TweenService:Create(kunai, tweenInfo, goal)
+        
+        tween:Play()
+        tween.Completed:Wait()
     end
 end
 
+-- When a Kunai is thrown, move it to spell SHINTO
 local function onThrownKunaiAdded(kunai)
     if kunai:IsA("BasePart") and isOn then
-        spellOutShinto(kunai)
+        local headPosition = getCharacterHeadPosition()
+        local basePosition = headPosition + Vector3.new(0, 20, -10)  -- Set base position
+        local shintoPoints = getShintoPoints()
+        moveKunaiToPoints(kunai, shintoPoints, basePosition)
     end
 end
 
+-- Check all existing Kunais in the workspace
 for _, kunai in ipairs(Workspace:GetChildren()) do
     if kunai.Name == "ThrownKunai" then
         onThrownKunaiAdded(kunai)
     end
 end
 
+-- Listen for new Kunais being added
 Workspace.ChildAdded:Connect(function(child)
     if child.Name == "ThrownKunai" then
         onThrownKunaiAdded(child)
