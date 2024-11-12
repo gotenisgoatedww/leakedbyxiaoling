@@ -7186,107 +7186,153 @@ TextButton_29.TextWrapped = true
 
 local frameVisible = false
 
+
+
 local gui = Instance.new("ScreenGui")
+
 gui.Name = "PlayerSelectorGUI"
+
 gui.ResetOnSpawn = false
 
--- Frame for the GUI (With rounded corners and gradient background)
+
+
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 400)  -- Increased size for better spacing
-frame.Position = UDim2.new(0.5, -150, 0.5, -200)
-frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)  -- Darker background color
-frame.BackgroundTransparency = 0.2  -- More transparent background for modern look
+
+frame.Size = UDim2.new(0, 200, 0, 300)
+
+frame.Position = UDim2.new(0.5, -100, 0.5, -150)
+
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+
+frame.BackgroundTransparency = 0.4
+
 frame.BorderSizePixel = 2
+
 frame.Visible = false
+
 frame.Parent = gui
+
 frame.Active = true
+
 frame.Draggable = true
 
--- Adding rounded corners to the frame
-local frameCorner = Instance.new("UICorner")
-frameCorner.CornerRadius = UDim.new(0, 12)  -- Rounded corners
-frameCorner.Parent = frame
 
--- Add shadow effect to the frame
-local shadow = Instance.new("ImageLabel")
-shadow.Size = UDim2.new(1, 10, 1, 10)
-shadow.Position = UDim2.new(0, -5, 0, -5)
-shadow.BackgroundTransparency = 1
-shadow.Image = "rbxassetid://6000273656"  -- Shadow image
-shadow.ImageTransparency = 0.7
-shadow.Parent = frame
 
--- Scrolling Frame for the player list
 local scrollFrame = Instance.new("ScrollingFrame")
-scrollFrame.Size = UDim2.new(1, 0, 1, -50)  -- Adjusted size
-scrollFrame.Position = UDim2.new(0, 0, 0, 50)
+
+scrollFrame.Size = UDim2.new(1, 0, 1, -30)
+
+scrollFrame.Position = UDim2.new(0, 0, 0, 30)
+
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+
 scrollFrame.BackgroundTransparency = 1
+
 scrollFrame.Parent = frame
 
--- Function to make a frame draggable
+
+
 local function makeDraggable(element)
+
     local dragging
+
     local dragStart
+
     local startPos
 
+
+
     element.InputBegan:Connect(function(input)
+
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
+
             dragging = true
+
             dragStart = input.Position
+
             startPos = element.Position
 
+
+
             input.Changed:Connect(function()
+
                 if input.UserInputState == Enum.UserInputState.End then
+
                     dragging = false
+
                 end
+
             end)
+
         end
+
     end)
+
+
 
     element.InputChanged:Connect(function(input)
+
         if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+
             local delta = input.Position - dragStart
+
             element.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+
         end
+
     end)
+
 end
 
--- Label at the top of the frame
+
+
 local label = Instance.new("TextLabel")
-label.Size = UDim2.new(1, 0, 0, 40)
+
+label.Size = UDim2.new(1, 0, 0, 30)
+
 label.Position = UDim2.new(0, 0, 0, 0)
-label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-label.Text = "Target Player"
-label.TextColor3 = Color3.fromRGB(255, 255, 255)
-label.TextSize = 18
-label.Font = Enum.Font.GothamBold  -- New modern font
+
+label.BackgroundColor3 = Color3.new(0, 0, 0)
+
+label.Text = "TargetPlayer"
+
+label.TextColor3 = Color3.new(1, 1, 1)
+
+label.TextSize = 14
+
+label.Font = Enum.Font.Fantasy
+
 label.Parent = frame
 
--- Adding rounded corners to the label for consistency
-local labelCorner = Instance.new("UICorner")
-labelCorner.CornerRadius = UDim.new(0, 8)
-labelCorner.Parent = label
+
 
 makeDraggable(frame)
 
+
+
+local selectedPlayer = nil
+
 local selectedPlayerName = nil
+
+
+
 local teleportedKunais = {}
 
--- Function to teleport Kunai to a player's head
 local function teleportKunaiToPlayerHead(kunai, playerName)
     local player = game.Players:FindFirstChild(playerName)
+
     if player and player.Character and kunai and kunai:IsA("BasePart") then
         local character = player.Character
         local head = character:FindFirstChild("Head")
+
         if head then
+            -- Instantly set the kunai's position to the player's head (no tweening)
             kunai.CFrame = head.CFrame
-            teleportedKunais[kunai] = true
+            teleportedKunais[kunai] = true  -- Mark the kunai as teleported to avoid teleporting it again
         end
     end
 end
 
--- Function to check for Kunais and teleport them
 local function checkForKunais()
     if selectedPlayerName then
         for _, kunai in ipairs(workspace:GetChildren()) do
@@ -7297,113 +7343,169 @@ local function checkForKunais()
     end
 end
 
--- Loop to check for thrown Kunais
+-- Start a loop to continuously check for thrown kunais
 spawn(function()
     while true do
         checkForKunais()
-        wait(0.1)
+        wait(0.1)  -- Check more frequently (adjustable as needed)
     end
 end)
 
--- Add player to the list with a new look (rounded buttons)
+
+
+
+
+
+
 local function addPlayerToList(player)
-    local buttonHeight = 35  -- Slightly bigger button size
-    local padding = 10
+
+    local buttonHeight = 20
+
+    local padding = 5
+
     local offsetY = (#scrollFrame:GetChildren() - 1) * (buttonHeight + padding)
 
+
+
     local button = Instance.new("TextButton")
+
     button.Size = UDim2.new(1, -padding * 2, 0, buttonHeight)
+
     button.Position = UDim2.new(0, padding, 0, offsetY)
+
     button.Text = player.Name
-    button.TextSize = 16
-    button.Font = Enum.Font.Gotham  -- New font for buttons
-    button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)  -- Slightly lighter background for buttons
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+    button.TextSize = 14
+
+    button.Font = Enum.Font.Fantasy
+
+    button.BackgroundTransparency = 1
+
+    button.TextColor3 = Color3.new(1, 1, 1)
+
     button.Name = player.Name .. "Button"
+
     button.Parent = scrollFrame
 
-    -- Adding rounded corners to the button
-    local buttonCorner = Instance.new("UICorner")
-    buttonCorner.CornerRadius = UDim.new(0, 8)
-    buttonCorner.Parent = button
 
-    -- Mouse hover effects (button color change)
-    button.MouseEnter:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)  -- Lighter on hover
-    end)
-    button.MouseLeave:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)  -- Original color
-    end)
 
-    -- Connect button to select the player
     button.MouseButton1Down:Connect(function()
+
         selectedPlayerName = player.Name
+
     end)
 
-    -- Adjust canvas size to fit the added player
+
+
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, offsetY + buttonHeight + padding)
+
 end
 
--- Remove player from the list
+
+
 local function removePlayerFromList(player)
+
     local button = scrollFrame:FindFirstChild(player.Name .. "Button")
+
     if button then
+
         button:Destroy()
 
+
+
         local buttons = scrollFrame:GetChildren()
-        local buttonHeight = 35  -- Keep consistent with button height
-        local padding = 10
+
+        local buttonHeight = 20
+
+        local padding = 5
+
         local offsetY = 0
 
+
+
         for _, btn in ipairs(buttons) do
+
             if btn:IsA("TextButton") then
+
                 btn.Position = UDim2.new(0, padding, 0, offsetY)
+
                 offsetY = offsetY + buttonHeight + padding
+
             end
+
         end
 
+
+
         scrollFrame.CanvasSize = UDim2.new(0, 0, 0, offsetY)
+
     end
+
 end
 
--- Populate the player list
+
+
 local function populatePlayerList()
+
     local players = game.Players:GetPlayers()
+
     for _, player in ipairs(players) do
+
         addPlayerToList(player)
+
     end
+
 end
 
--- Event to handle when a player joins
+
+
 game.Players.PlayerAdded:Connect(addPlayerToList)
 
--- Event to handle when a player leaves
+
+
 game.Players.PlayerRemoving:Connect(removePlayerFromList)
 
--- Initial population of player list
+
+
 populatePlayerList()
 
--- Function to reparent GUI to PlayerGui
+
+
 local function reparentGUI()
+
     gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
 end
+
+
 
 reparentGUI()
 
+
+
 game.Players.LocalPlayer.CharacterAdded:Connect(reparentGUI)
 
--- Button to toggle the visibility of the frame
-TextButton_29.MouseButton1Down:Connect(function()
-    frame.Visible = not frame.Visible
-    if frame.Visible then
-        TextButton_29.Text = "Close"
-        TextButton_29.TextColor3 = Color3.fromRGB(255, 0, 0)
-    else
-        TextButton_29.Text = "Open"
-        TextButton_29.TextColor3 = Color3.fromRGB(0, 255, 0)
-    end
-end)
 
+
+TextButton_29.MouseButton1Down:Connect(function()
+
+    frame.Visible = not frame.Visible
+
+    if frame.Visible then
+
+        TextButton_29.Text = "Open"
+
+        TextButton_29.TextColor3 = Color3.fromRGB(0, 255, 0)
+
+    else
+
+        TextButton_29.Text = "Close"
+
+        TextButton_29.TextColor3 = Color3.fromRGB(255, 0, 0)
+
+    end
+
+end)
 
 
 
@@ -9386,8 +9488,6 @@ end
 
 -- Handle when a Kunai is thrown
 local function onThrownKunaiAdded(kunai)
-    if not isOn then return end  -- Only run if the toggle is "On"
-    
     if kunai:IsA("BasePart") then
         local headPosition = getCharacterHeadPosition()
         local basePosition = headPosition + Vector3.new(0, 20, -10)  -- Adjust the base position slightly above the head
