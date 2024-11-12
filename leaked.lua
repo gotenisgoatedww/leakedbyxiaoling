@@ -7190,22 +7190,36 @@ local gui = Instance.new("ScreenGui")
 gui.Name = "PlayerSelectorGUI"
 gui.ResetOnSpawn = false
 
--- Frame for the GUI
+-- Frame for the GUI (With rounded corners and gradient background)
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 400)  -- Made the frame bigger
+frame.Size = UDim2.new(0, 300, 0, 400)  -- Increased size for better spacing
 frame.Position = UDim2.new(0.5, -150, 0.5, -200)
-frame.BackgroundColor3 = Color3.new(0, 0, 0)
-frame.BackgroundTransparency = 0.4
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)  -- Darker background color
+frame.BackgroundTransparency = 0.3
 frame.BorderSizePixel = 2
 frame.Visible = false
 frame.Parent = gui
 frame.Active = true
 frame.Draggable = true
 
--- Scrolling Frame for player list
+-- Adding rounded corners to the frame
+local frameCorner = Instance.new("UICorner")
+frameCorner.CornerRadius = UDim.new(0, 12)  -- Rounded corners
+frameCorner.Parent = frame
+
+-- Add shadow effect to the frame
+local shadow = Instance.new("ImageLabel")
+shadow.Size = UDim2.new(1, 10, 1, 10)
+shadow.Position = UDim2.new(0, -5, 0, -5)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://6000273656"  -- Shadow image
+shadow.ImageTransparency = 0.7
+shadow.Parent = frame
+
+-- Scrolling Frame for the player list
 local scrollFrame = Instance.new("ScrollingFrame")
-scrollFrame.Size = UDim2.new(1, 0, 1, -40)  -- Adjusted to fit the frame
-scrollFrame.Position = UDim2.new(0, 0, 0, 40)
+scrollFrame.Size = UDim2.new(1, 0, 1, -50)  -- Adjusted size
+scrollFrame.Position = UDim2.new(0, 0, 0, 50)
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollFrame.BackgroundTransparency = 1
 scrollFrame.Parent = frame
@@ -7240,14 +7254,19 @@ end
 
 -- Label at the top of the frame
 local label = Instance.new("TextLabel")
-label.Size = UDim2.new(1, 0, 0, 30)
+label.Size = UDim2.new(1, 0, 0, 40)
 label.Position = UDim2.new(0, 0, 0, 0)
-label.BackgroundColor3 = Color3.new(0, 0, 0)
+label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 label.Text = "Target Player"
-label.TextColor3 = Color3.new(1, 1, 1)
-label.TextSize = 16
+label.TextColor3 = Color3.fromRGB(1, 1, 1)
+label.TextSize = 18
 label.Font = Enum.Font.Fantasy
 label.Parent = frame
+
+-- Adding rounded corners to the label for consistency
+local labelCorner = Instance.new("UICorner")
+labelCorner.CornerRadius = UDim.new(0, 8)
+labelCorner.Parent = label
 
 makeDraggable(frame)
 
@@ -7286,9 +7305,9 @@ spawn(function()
     end
 end)
 
--- Add player to the list
+-- Add player to the list with a new look (rounded buttons)
 local function addPlayerToList(player)
-    local buttonHeight = 30  -- Increased button size for readability
+    local buttonHeight = 35  -- Slightly bigger button size
     local padding = 10
     local offsetY = (#scrollFrame:GetChildren() - 1) * (buttonHeight + padding)
 
@@ -7296,12 +7315,25 @@ local function addPlayerToList(player)
     button.Size = UDim2.new(1, -padding * 2, 0, buttonHeight)
     button.Position = UDim2.new(0, padding, 0, offsetY)
     button.Text = player.Name
-    button.TextSize = 16  -- Increased text size
+    button.TextSize = 16
     button.Font = Enum.Font.Fantasy
-    button.BackgroundTransparency = 1
-    button.TextColor3 = Color3.new(1, 1, 1)
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Darker button background
+    button.TextColor3 = Color3.fromRGB(1, 1, 1)
     button.Name = player.Name .. "Button"
     button.Parent = scrollFrame
+
+    -- Adding rounded corners to the button
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(0, 8)
+    buttonCorner.Parent = button
+
+    -- Mouse hover effects (button color change)
+    button.MouseEnter:Connect(function()
+        button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)  -- Slightly lighter on hover
+    end)
+    button.MouseLeave:Connect(function()
+        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Original color
+    end)
 
     -- Connect button to select the player
     button.MouseButton1Down:Connect(function()
@@ -7319,7 +7351,7 @@ local function removePlayerFromList(player)
         button:Destroy()
 
         local buttons = scrollFrame:GetChildren()
-        local buttonHeight = 30
+        local buttonHeight = 35  -- Keep consistent with button height
         local padding = 10
         local offsetY = 0
 
@@ -7371,6 +7403,7 @@ TextButton_29.MouseButton1Down:Connect(function()
         TextButton_29.TextColor3 = Color3.fromRGB(0, 255, 0)
     end
 end)
+
 
 
 
