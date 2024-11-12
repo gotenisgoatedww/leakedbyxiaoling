@@ -7186,153 +7186,88 @@ TextButton_29.TextWrapped = true
 
 local frameVisible = false
 
-
-
 local gui = Instance.new("ScreenGui")
-
 gui.Name = "PlayerSelectorGUI"
-
 gui.ResetOnSpawn = false
 
-
-
+-- Frame for the GUI
 local frame = Instance.new("Frame")
-
-frame.Size = UDim2.new(0, 200, 0, 300)
-
-frame.Position = UDim2.new(0.5, -100, 0.5, -150)
-
+frame.Size = UDim2.new(0, 300, 0, 400)  -- Made the frame bigger
+frame.Position = UDim2.new(0.5, -150, 0.5, -200)
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
-
 frame.BackgroundTransparency = 0.4
-
 frame.BorderSizePixel = 2
-
 frame.Visible = false
-
 frame.Parent = gui
-
 frame.Active = true
-
 frame.Draggable = true
 
-
-
+-- Scrolling Frame for player list
 local scrollFrame = Instance.new("ScrollingFrame")
-
-scrollFrame.Size = UDim2.new(1, 0, 1, -30)
-
-scrollFrame.Position = UDim2.new(0, 0, 0, 30)
-
+scrollFrame.Size = UDim2.new(1, 0, 1, -40)  -- Adjusted to fit the frame
+scrollFrame.Position = UDim2.new(0, 0, 0, 40)
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-
 scrollFrame.BackgroundTransparency = 1
-
 scrollFrame.Parent = frame
 
-
-
+-- Function to make a frame draggable
 local function makeDraggable(element)
-
     local dragging
-
     local dragStart
-
     local startPos
 
-
-
     element.InputBegan:Connect(function(input)
-
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-
             dragging = true
-
             dragStart = input.Position
-
             startPos = element.Position
 
-
-
             input.Changed:Connect(function()
-
                 if input.UserInputState == Enum.UserInputState.End then
-
                     dragging = false
-
                 end
-
             end)
-
         end
-
     end)
-
-
 
     element.InputChanged:Connect(function(input)
-
         if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
-
             local delta = input.Position - dragStart
-
             element.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-
         end
-
     end)
-
 end
 
-
-
+-- Label at the top of the frame
 local label = Instance.new("TextLabel")
-
 label.Size = UDim2.new(1, 0, 0, 30)
-
 label.Position = UDim2.new(0, 0, 0, 0)
-
 label.BackgroundColor3 = Color3.new(0, 0, 0)
-
-label.Text = "TargetPlayer"
-
+label.Text = "Target Player"
 label.TextColor3 = Color3.new(1, 1, 1)
-
-label.TextSize = 14
-
+label.TextSize = 16
 label.Font = Enum.Font.Fantasy
-
 label.Parent = frame
-
-
 
 makeDraggable(frame)
 
-
-
-local selectedPlayer = nil
-
 local selectedPlayerName = nil
-
-
-
 local teleportedKunais = {}
 
+-- Function to teleport Kunai to a player's head
 local function teleportKunaiToPlayerHead(kunai, playerName)
     local player = game.Players:FindFirstChild(playerName)
-
     if player and player.Character and kunai and kunai:IsA("BasePart") then
         local character = player.Character
         local head = character:FindFirstChild("Head")
-
         if head then
-            -- Instantly set the kunai's position to the player's head (no tweening)
             kunai.CFrame = head.CFrame
-            teleportedKunais[kunai] = true  -- Mark the kunai as teleported to avoid teleporting it again
+            teleportedKunais[kunai] = true
         end
     end
 end
 
+-- Function to check for Kunais and teleport them
 local function checkForKunais()
     if selectedPlayerName then
         for _, kunai in ipairs(workspace:GetChildren()) do
@@ -7343,168 +7278,98 @@ local function checkForKunais()
     end
 end
 
--- Start a loop to continuously check for thrown kunais
+-- Loop to check for thrown Kunais
 spawn(function()
     while true do
         checkForKunais()
-        wait(0.1)  -- Check more frequently (adjustable as needed)
+        wait(0.1)
     end
 end)
 
-
-
-
-
-
-
+-- Add player to the list
 local function addPlayerToList(player)
-
-    local buttonHeight = 20
-
-    local padding = 5
-
+    local buttonHeight = 30  -- Increased button size for readability
+    local padding = 10
     local offsetY = (#scrollFrame:GetChildren() - 1) * (buttonHeight + padding)
 
-
-
     local button = Instance.new("TextButton")
-
     button.Size = UDim2.new(1, -padding * 2, 0, buttonHeight)
-
     button.Position = UDim2.new(0, padding, 0, offsetY)
-
     button.Text = player.Name
-
-    button.TextSize = 14
-
+    button.TextSize = 16  -- Increased text size
     button.Font = Enum.Font.Fantasy
-
     button.BackgroundTransparency = 1
-
     button.TextColor3 = Color3.new(1, 1, 1)
-
     button.Name = player.Name .. "Button"
-
     button.Parent = scrollFrame
 
-
-
+    -- Connect button to select the player
     button.MouseButton1Down:Connect(function()
-
         selectedPlayerName = player.Name
-
     end)
 
-
-
+    -- Adjust canvas size to fit the added player
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, offsetY + buttonHeight + padding)
-
 end
 
-
-
+-- Remove player from the list
 local function removePlayerFromList(player)
-
     local button = scrollFrame:FindFirstChild(player.Name .. "Button")
-
     if button then
-
         button:Destroy()
 
-
-
         local buttons = scrollFrame:GetChildren()
-
-        local buttonHeight = 20
-
-        local padding = 5
-
+        local buttonHeight = 30
+        local padding = 10
         local offsetY = 0
 
-
-
         for _, btn in ipairs(buttons) do
-
             if btn:IsA("TextButton") then
-
                 btn.Position = UDim2.new(0, padding, 0, offsetY)
-
                 offsetY = offsetY + buttonHeight + padding
-
             end
-
         end
 
-
-
         scrollFrame.CanvasSize = UDim2.new(0, 0, 0, offsetY)
-
     end
-
 end
 
-
-
+-- Populate the player list
 local function populatePlayerList()
-
     local players = game.Players:GetPlayers()
-
     for _, player in ipairs(players) do
-
         addPlayerToList(player)
-
     end
-
 end
 
-
-
+-- Event to handle when a player joins
 game.Players.PlayerAdded:Connect(addPlayerToList)
 
-
-
+-- Event to handle when a player leaves
 game.Players.PlayerRemoving:Connect(removePlayerFromList)
 
-
-
+-- Initial population of player list
 populatePlayerList()
 
-
-
+-- Function to reparent GUI to PlayerGui
 local function reparentGUI()
-
     gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
 end
-
-
 
 reparentGUI()
 
-
-
 game.Players.LocalPlayer.CharacterAdded:Connect(reparentGUI)
 
-
-
+-- Button to toggle the visibility of the frame
 TextButton_29.MouseButton1Down:Connect(function()
-
     frame.Visible = not frame.Visible
-
     if frame.Visible then
-
-        TextButton_29.Text = "Open"
-
-        TextButton_29.TextColor3 = Color3.fromRGB(0, 255, 0)
-
-    else
-
         TextButton_29.Text = "Close"
-
         TextButton_29.TextColor3 = Color3.fromRGB(255, 0, 0)
-
+    else
+        TextButton_29.Text = "Open"
+        TextButton_29.TextColor3 = Color3.fromRGB(0, 255, 0)
     end
-
 end)
 
 
