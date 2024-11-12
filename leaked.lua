@@ -9534,7 +9534,7 @@ TextLabel_60.ZIndex = 2
 
 TextLabel_60.Font = Enum.Font.Fantasy
 
-TextLabel_60.Text = "WordShur:"
+TextLabel_60.Text = "HeartShur:"
 
 TextLabel_60.TextColor3 = Color3.fromRGB(255, 255, 255)
 
