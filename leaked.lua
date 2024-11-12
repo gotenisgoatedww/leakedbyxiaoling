@@ -9510,15 +9510,6 @@ updateButton()
 
 
 
-
-
-
-
-
-
-
-
-
 TextLabel_60.Parent = Frame4_4
 
 TextLabel_60.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
