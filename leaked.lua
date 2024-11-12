@@ -9429,7 +9429,7 @@ local function getCharacterHeadPosition()
     return Vector3.new(0, 0, 0)
 end
 
--- Create a table of points for each letter
+-- Points for each letter in "SHINTO"
 local letterPoints = {
     S = {
         Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
@@ -9460,11 +9460,14 @@ local function getShintoPoints()
     local points = {}
     local currentX = 0
 
+    -- Reduced the spacing between the letters to avoid overlap
+    local letterSpacing = 15  -- Smaller space between letters
+    
     for _, letter in ipairs({"S", "H", "I", "N", "T", "O"}) do
         for _, point in ipairs(letterPoints[letter]) do
             table.insert(points, point + Vector3.new(currentX, 0, 0))
         end
-        currentX = currentX + 20  -- Add extra space between letters
+        currentX = currentX + letterSpacing  -- Adjust space between letters
     end
 
     return points
@@ -9503,6 +9506,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 
