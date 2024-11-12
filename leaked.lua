@@ -9488,6 +9488,8 @@ end
 
 -- Handle when a Kunai is thrown
 local function onThrownKunaiAdded(kunai)
+    if not isOn then return end  -- Only run if the toggle is "On"
+    
     if kunai:IsA("BasePart") then
         local headPosition = getCharacterHeadPosition()
         local basePosition = headPosition + Vector3.new(0, 20, -10)  -- Adjust the base position slightly above the head
@@ -9511,6 +9513,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 TextLabel_60.Parent = Frame4_4
