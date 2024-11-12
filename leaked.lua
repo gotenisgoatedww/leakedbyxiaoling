@@ -9430,28 +9430,26 @@ local function getCharacterHeadPosition()
     return Vector3.new(0, 0, 0)
 end
 
--- Define points for each letter in "SHINTO"
+-- Define points for each letter in "LOL"
 local letterPoints = {
-    S = {Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
-        Vector3.new(10, 55, 0), Vector3.new(5, 55, 0), Vector3.new(0, 50, 0)},
-    H = {Vector3.new(20, 60, 0), Vector3.new(20, 50, 0), Vector3.new(25, 55, 0),
-        Vector3.new(30, 60, 0), Vector3.new(30, 50, 0)},
-    I = {Vector3.new(40, 60, 0), Vector3.new(40, 50, 0)},
-    N = {Vector3.new(55, 50, 0), Vector3.new(55, 60, 0), Vector3.new(60, 55, 0), Vector3.new(65, 60, 0),
-        Vector3.new(65, 50, 0)},
-    T = {Vector3.new(75, 60, 0), Vector3.new(70, 60, 0), Vector3.new(80, 60, 0), Vector3.new(75, 50, 0)},
-    O = {Vector3.new(90, 60, 0), Vector3.new(90, 50, 0), Vector3.new(95, 55, 0), Vector3.new(100, 60, 0),
-        Vector3.new(100, 50, 0), Vector3.new(95, 45, 0)}
+    L = {
+        Vector3.new(0, 60, 0), Vector3.new(0, 50, 0),
+        Vector3.new(5, 50, 0), Vector3.new(5, 40, 0)
+    },
+    O = {
+        Vector3.new(10, 60, 0), Vector3.new(10, 50, 0), Vector3.new(15, 45, 0), Vector3.new(20, 50, 0),
+        Vector3.new(20, 60, 0), Vector3.new(15, 65, 0), Vector3.new(10, 60, 0)
+    }
 }
 
--- Combine all letters into the full word "SHINTO"
-local function getShintoPoints()
+-- Combine all letters into the full word "LOL"
+local function getLolPoints()
     local points = {}
     local currentX = 0
     local letterSpacing = 3  -- Reduced space between letters
 
     -- Iterate through each letter and add its points to the final list
-    for _, letter in ipairs({"S", "H", "I", "N", "T", "O"}) do
+    for _, letter in ipairs({"L", "O", "L"}) do
         for _, point in ipairs(letterPoints[letter]) do
             table.insert(points, point + Vector3.new(currentX, 0, 0))
         end
@@ -9490,8 +9488,8 @@ local function onThrownKunaiAdded(kunai)
     if kunai:IsA("BasePart") and isOn then
         local headPosition = getCharacterHeadPosition()
         local basePosition = headPosition + Vector3.new(0, 20, -10)
-        local shintoPoints = getShintoPoints()
-        moveKunaiToPoints(kunai, shintoPoints, basePosition)
+        local lolPoints = getLolPoints()
+        moveKunaiToPoints(kunai, lolPoints, basePosition)
     end
 end
 
@@ -9508,6 +9506,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 
