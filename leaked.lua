@@ -9429,8 +9429,17 @@ local function getCharacterHeadPosition()
     return Vector3.new(0, 0, 0)
 end
 
+-- Define metatable for letter points
+local letterPointsMeta = {
+    -- Default behavior for missing letters (return a small, neutral shape)
+    __index = function(table, letter)
+        print("Letter '" .. letter .. "' not defined, returning default points.")
+        return {Vector3.new(0, 0, 0), Vector3.new(1, 1, 0)}  -- Default fallback shape
+    end
+}
+
 -- Points for each letter in "SHINTO"
-local letterPoints = {
+local letterPoints = setmetatable({
     S = {
         Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
         Vector3.new(10, 55, 0), Vector3.new(5, 55, 0), Vector3.new(0, 50, 0),
@@ -9453,7 +9462,7 @@ local letterPoints = {
         Vector3.new(90, 60, 0), Vector3.new(90, 50, 0), Vector3.new(95, 55, 0), Vector3.new(100, 60, 0),
         Vector3.new(100, 50, 0), Vector3.new(95, 45, 0),
     }
-}
+}, letterPointsMeta)  -- Apply the metatable to the letterPoints table
 
 -- Combine all letters into the full word "SHINTO"
 local function getShintoPoints()
@@ -9506,6 +9515,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 
