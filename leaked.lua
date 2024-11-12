@@ -9429,17 +9429,8 @@ local function getCharacterHeadPosition()
     return Vector3.new(0, 0, 0)
 end
 
--- Define metatable for letter points
-local letterPointsMeta = {
-    -- Default behavior for missing letters (return a small, neutral shape)
-    __index = function(table, letter)
-        print("Letter '" .. letter .. "' not defined, returning default points.")
-        return {Vector3.new(0, 0, 0), Vector3.new(1, 1, 0)}  -- Default fallback shape
-    end
-}
-
--- Points for each letter in "SHINTO"
-local letterPoints = setmetatable({
+-- Define points for each letter in "SHINTO"
+local letterPoints = {
     S = {
         Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
         Vector3.new(10, 55, 0), Vector3.new(5, 55, 0), Vector3.new(0, 50, 0),
@@ -9462,21 +9453,36 @@ local letterPoints = setmetatable({
         Vector3.new(90, 60, 0), Vector3.new(90, 50, 0), Vector3.new(95, 55, 0), Vector3.new(100, 60, 0),
         Vector3.new(100, 50, 0), Vector3.new(95, 45, 0),
     }
-}, letterPointsMeta)  -- Apply the metatable to the letterPoints table
+}
 
--- Combine all letters into the full word "SHINTO"
+-- Function to get points for each letter and add spacing
+local function getLetterPoints(letter, offsetX)
+    local points = {}
+    local currentX = offsetX
+
+    -- Add the points for the letter
+    for _, point in ipairs(letterPoints[letter]) do
+        table.insert(points, point + Vector3.new(currentX, 0, 0))
+    end
+
+    -- Return the points for the letter
+    return points
+end
+
+-- Function to combine all letters into the word "SHINTO"
 local function getShintoPoints()
     local points = {}
     local currentX = 0
+    local letterSpacing = 3  -- Reduced space between letters
 
-    -- Reduced the spacing between the letters to avoid overlap
-    local letterSpacing = 15  -- Smaller space between letters
-    
-    for _, letter in ipairs({"S", "H", "I", "N", "T", "O"}) do
-        for _, point in ipairs(letterPoints[letter]) do
-            table.insert(points, point + Vector3.new(currentX, 0, 0))
+    -- Add each letter's points with appropriate spacing
+    local letters = {"S", "H", "I", "N", "T", "O"}
+    for _, letter in ipairs(letters) do
+        local letterPoints = getLetterPoints(letter, currentX)
+        for _, point in ipairs(letterPoints) do
+            table.insert(points, point)
         end
-        currentX = currentX + letterSpacing  -- Adjust space between letters
+        currentX = currentX + #letterPoints * letterSpacing  -- Adjust space between letters
     end
 
     return points
@@ -9502,6 +9508,7 @@ local function onThrownKunaiAdded(kunai)
     end
 end
 
+-- Apply to existing Kunais in the workspace
 for _, kunai in ipairs(Workspace:GetChildren()) do
     if kunai.Name == "ThrownKunai" then
         onThrownKunaiAdded(kunai)
@@ -9515,6 +9522,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 
