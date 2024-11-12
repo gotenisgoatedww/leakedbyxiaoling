@@ -9402,6 +9402,7 @@ TextButton_38.TextWrapped = true
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
 
 local localPlayer = Players.LocalPlayer
 
@@ -9431,72 +9432,58 @@ end
 
 -- Define points for each letter in "SHINTO"
 local letterPoints = {
-    S = {
-        Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
-        Vector3.new(10, 55, 0), Vector3.new(5, 55, 0), Vector3.new(0, 50, 0),
-    },
-    H = {
-        Vector3.new(20, 60, 0), Vector3.new(20, 50, 0), Vector3.new(25, 55, 0),
-        Vector3.new(30, 60, 0), Vector3.new(30, 50, 0),
-    },
-    I = {
-        Vector3.new(40, 60, 0), Vector3.new(40, 50, 0),
-    },
-    N = {
-        Vector3.new(55, 50, 0), Vector3.new(55, 60, 0), Vector3.new(60, 55, 0), Vector3.new(65, 60, 0),
-        Vector3.new(65, 50, 0),
-    },
-    T = {
-        Vector3.new(75, 60, 0), Vector3.new(70, 60, 0), Vector3.new(80, 60, 0), Vector3.new(75, 50, 0),
-    },
-    O = {
-        Vector3.new(90, 60, 0), Vector3.new(90, 50, 0), Vector3.new(95, 55, 0), Vector3.new(100, 60, 0),
-        Vector3.new(100, 50, 0), Vector3.new(95, 45, 0),
-    }
+    S = {Vector3.new(0, 60, 0), Vector3.new(5, 65, 0), Vector3.new(10, 65, 0), Vector3.new(15, 60, 0),
+        Vector3.new(10, 55, 0), Vector3.new(5, 55, 0), Vector3.new(0, 50, 0)},
+    H = {Vector3.new(20, 60, 0), Vector3.new(20, 50, 0), Vector3.new(25, 55, 0),
+        Vector3.new(30, 60, 0), Vector3.new(30, 50, 0)},
+    I = {Vector3.new(40, 60, 0), Vector3.new(40, 50, 0)},
+    N = {Vector3.new(55, 50, 0), Vector3.new(55, 60, 0), Vector3.new(60, 55, 0), Vector3.new(65, 60, 0),
+        Vector3.new(65, 50, 0)},
+    T = {Vector3.new(75, 60, 0), Vector3.new(70, 60, 0), Vector3.new(80, 60, 0), Vector3.new(75, 50, 0)},
+    O = {Vector3.new(90, 60, 0), Vector3.new(90, 50, 0), Vector3.new(95, 55, 0), Vector3.new(100, 60, 0),
+        Vector3.new(100, 50, 0), Vector3.new(95, 45, 0)}
 }
 
--- Function to get points for each letter and add spacing
-local function getLetterPoints(letter, offsetX)
-    local points = {}
-    local currentX = offsetX
-
-    -- Add the points for the letter
-    for _, point in ipairs(letterPoints[letter]) do
-        table.insert(points, point + Vector3.new(currentX, 0, 0))
-    end
-
-    -- Return the points for the letter
-    return points
-end
-
--- Function to combine all letters into the word "SHINTO"
+-- Combine all letters into the full word "SHINTO"
 local function getShintoPoints()
     local points = {}
     local currentX = 0
     local letterSpacing = 3  -- Reduced space between letters
 
-    -- Add each letter's points with appropriate spacing
-    local letters = {"S", "H", "I", "N", "T", "O"}
-    for _, letter in ipairs(letters) do
-        local letterPoints = getLetterPoints(letter, currentX)
-        for _, point in ipairs(letterPoints) do
-            table.insert(points, point)
+    -- Iterate through each letter and add its points to the final list
+    for _, letter in ipairs({"S", "H", "I", "N", "T", "O"}) do
+        for _, point in ipairs(letterPoints[letter]) do
+            table.insert(points, point + Vector3.new(currentX, 0, 0))
         end
-        currentX = currentX + #letterPoints * letterSpacing  -- Adjust space between letters
+        currentX = currentX + letterSpacing
     end
 
     return points
 end
 
-local function tweenKunaiToPoints(kunai, points, basePosition)
-    for i, point in ipairs(points) do
-        local goal = {Position = basePosition + point}
-        local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-        local tween = TweenService:Create(kunai, tweenInfo, goal)
+local function moveKunaiToPoints(kunai, points, basePosition)
+    local part = kunai
+    local i = 1
+    local goalPosition = basePosition + points[i]
 
-        tween:Play()
-        tween.Completed:Wait()
+    local function updatePosition()
+        if i <= #points then
+            local targetPosition = basePosition + points[i]
+            local currentCFrame = part.CFrame
+            local targetCFrame = CFrame.new(targetPosition)
+
+            -- Move the kunai using Lerp without adjusting speed
+            part.CFrame = currentCFrame:Lerp(targetCFrame, 0.1)  -- Lerp factor (0.1) can be adjusted for smoothness
+
+            if (part.Position - targetPosition).Magnitude < 1 then
+                i = i + 1
+            end
+        else
+            part.CFrame = CFrame.new(basePosition + points[#points])  -- Final position
+        end
     end
+
+    RunService.Heartbeat:Connect(updatePosition)
 end
 
 local function onThrownKunaiAdded(kunai)
@@ -9504,11 +9491,10 @@ local function onThrownKunaiAdded(kunai)
         local headPosition = getCharacterHeadPosition()
         local basePosition = headPosition + Vector3.new(0, 20, -10)
         local shintoPoints = getShintoPoints()
-        tweenKunaiToPoints(kunai, shintoPoints, basePosition)
+        moveKunaiToPoints(kunai, shintoPoints, basePosition)
     end
 end
 
--- Apply to existing Kunais in the workspace
 for _, kunai in ipairs(Workspace:GetChildren()) do
     if kunai.Name == "ThrownKunai" then
         onThrownKunaiAdded(kunai)
@@ -9522,6 +9508,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 updateButton()
+
 
 
 
