@@ -9429,28 +9429,28 @@ local function getCharacterHeadPosition()
     return Vector3.new(0, 0, 0)
 end
 
--- Define clearer coordinates for each letter in "SHINTO"
+-- Refined points for "SHINTO" with better spacing and clarity
 local shintoPoints = {
     -- "S"
-    Vector3.new(-40, 60, 0), Vector3.new(-35, 65, 0), Vector3.new(-30, 65, 0), Vector3.new(-25, 60, 0),
-    Vector3.new(-30, 55, 0), Vector3.new(-35, 55, 0), Vector3.new(-40, 50, 0),
+    Vector3.new(-50, 60, 0), Vector3.new(-45, 65, 0), Vector3.new(-40, 65, 0), Vector3.new(-35, 60, 0),
+    Vector3.new(-40, 55, 0), Vector3.new(-45, 55, 0), Vector3.new(-50, 50, 0),
     
     -- "H"
-    Vector3.new(-20, 60, 0), Vector3.new(-20, 50, 0), Vector3.new(-15, 55, 0),
-    Vector3.new(-10, 60, 0), Vector3.new(-10, 50, 0),
+    Vector3.new(-30, 60, 0), Vector3.new(-30, 50, 0), Vector3.new(-25, 55, 0),
+    Vector3.new(-20, 60, 0), Vector3.new(-20, 50, 0),
     
     -- "I"
-    Vector3.new(0, 60, 0), Vector3.new(0, 50, 0),
+    Vector3.new(-10, 60, 0), Vector3.new(-10, 50, 0),
     
     -- "N"
-    Vector3.new(10, 50, 0), Vector3.new(10, 60, 0), Vector3.new(15, 55, 0), Vector3.new(20, 60, 0), Vector3.new(20, 50, 0),
+    Vector3.new(5, 50, 0), Vector3.new(5, 60, 0), Vector3.new(10, 55, 0), Vector3.new(15, 60, 0), Vector3.new(15, 50, 0),
     
     -- "T"
-    Vector3.new(30, 60, 0), Vector3.new(25, 60, 0), Vector3.new(35, 60, 0), Vector3.new(30, 50, 0),
+    Vector3.new(25, 60, 0), Vector3.new(20, 60, 0), Vector3.new(30, 60, 0), Vector3.new(25, 50, 0),
     
     -- "O"
-    Vector3.new(45, 60, 0), Vector3.new(45, 50, 0), Vector3.new(50, 65, 0), Vector3.new(55, 60, 0),
-    Vector3.new(55, 50, 0), Vector3.new(50, 45, 0)
+    Vector3.new(40, 60, 0), Vector3.new(40, 50, 0), Vector3.new(45, 65, 0), Vector3.new(50, 60, 0),
+    Vector3.new(50, 50, 0), Vector3.new(45, 45, 0)
 }
 
 local function tweenKunaiToPoints(kunai, points, basePosition)
